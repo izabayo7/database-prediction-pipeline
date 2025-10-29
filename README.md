@@ -36,34 +36,6 @@ This project aims to build an end-to-end machine learning pipeline that:
 
 ---
 
-## 📁 Project Structure
-
-```
-database-prediction-pipeline/
-├── README.md                                    # Main project documentation
-├── hr_employee_attrition.csv                    # Dataset
-├── .gitignore                                   # Git ignore rules
-├── .venv/                                       # Python virtual environment
-│
-├── task_1_database_in_sql_and_mongo/
-│   ├── README.md                                # Task 1 documentation & setup
-│   ├── mysql_import.py                          # MySQL data import script
-│   ├── mongodb_import.py                        # MongoDB data import script
-│   ├── requirements.txt                         # Python dependencies
-│   └── .env.example                             # Environment variables template
-│
-├── task_2_api_development/
-│   └── [API endpoints for CRUD operations]
-│
-├── task_3_ml_model_development/
-│   └── [ML models and predictions]
-│
-└── local/                                       # Local development files
-    └── git_stuff.txt                            # Git configuration helpers
-```
-
----
-
 ## 📚 Tasks Overview
 
 ### Task 1: Database Design
