@@ -2,16 +2,6 @@
 
 A comprehensive machine learning pipeline for predicting employee attrition using IBM HR Analytics dataset. This project implements a full-stack solution with dual database systems (MySQL and MongoDB), API endpoints, and ML prediction capabilities.
 
-## 📋 Table of Contents
-
-- [Project Overview](#project-overview)
-- [Dataset Information](#dataset-information)
-- [Project Structure](#project-structure)
-- [Tasks Overview](#tasks-overview)
-- [Quick Start](#quick-start)
-- [Contributing](#contributing)
-- [Team](#team)
-
 ---
 
 ## 🎯 Project Overview
@@ -81,6 +71,95 @@ database-prediction-pipeline/
 Implementation of dual database systems (MySQL and MongoDB) with complete schema design, stored procedures, triggers, and automated data import scripts.
 
 **📖 [View Task 1 Documentation](./task_1_database_in_sql_and_mongo/README.md)**
+
+#### Database Schema (ERD)
+
+```mermaid
+erDiagram
+    EMPLOYEES ||--o{ JOB_DETAILS : "has"
+    EMPLOYEES ||--|| COMPENSATION : "has"
+    EMPLOYEES ||--|| PERFORMANCE_METRICS : "has"
+    EMPLOYEES ||--|| SATISFACTION_SCORES : "has"
+    DEPARTMENTS ||--o{ JOB_DETAILS : "contains"
+
+    EMPLOYEES {
+        int employee_number PK
+        int age
+        varchar gender
+        varchar marital_status
+        int education
+        varchar education_field
+        int distance_from_home
+        char over_18
+        int employee_count
+        varchar attrition
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    DEPARTMENTS {
+        int department_id PK
+        varchar department_name UK
+        timestamp created_at
+    }
+
+    JOB_DETAILS {
+        int job_id PK
+        int employee_number FK
+        int department_id FK
+        varchar job_role
+        int job_level
+        int job_involvement
+        int job_satisfaction
+        int standard_hours
+        varchar business_travel
+        varchar overtime
+        timestamp created_at
+    }
+
+    COMPENSATION {
+        int compensation_id PK
+        int employee_number FK "UNIQUE"
+        int daily_rate
+        int hourly_rate
+        int monthly_income
+        int monthly_rate
+        int percent_salary_hike
+        int stock_option_level
+        timestamp last_salary_update
+    }
+
+    PERFORMANCE_METRICS {
+        int performance_id PK
+        int employee_number FK "UNIQUE"
+        int performance_rating
+        int years_at_company
+        int years_in_current_role
+        int years_since_last_promotion
+        int years_with_curr_manager
+        int total_working_years
+        int num_companies_worked
+        int training_times_last_year
+        date last_evaluation_date
+    }
+
+    SATISFACTION_SCORES {
+        int satisfaction_id PK
+        int employee_number FK "UNIQUE"
+        int environment_satisfaction
+        int job_satisfaction
+        int relationship_satisfaction
+        int work_life_balance
+        date survey_date
+    }
+```
+
+**Key Tables:**
+
+- **6 normalized tables** for MySQL implementation
+- **3 collections** for MongoDB implementation
+- **Stored procedures** for attrition risk calculation
+- **Triggers** for automatic timestamp updates
 
 ### Task 2: API Development
 
