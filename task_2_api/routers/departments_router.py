@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from ..database import get_db
 from .. import schemas
-from ..crud import departments_crud as crud
+from ..mysql_crud import mysql_departments_crud as crud
 
 router = APIRouter(
     prefix="/departments",
