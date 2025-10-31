@@ -6,7 +6,7 @@ from ..mysql_crud import mysql_departments_crud as crud
 
 router = APIRouter(
     prefix="/mysql/departments",
-    tags=["Departments"]
+    tags=["Departments (MYSQL)"]
 )
 
 @router.get("/", response_model=list[schemas.Department])

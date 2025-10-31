@@ -124,3 +124,47 @@ class Department(DepartmentBase):
         arbitrary_types_allowed=True,
         json_encoders={ObjectId: str},
     )
+
+
+# JOB DETAILS MODELS
+
+class JobDetailBase(BaseModel):
+    employee_id: PyObjectId = Field(..., description="MongoDB ID of the employee")
+    department_id: Optional[PyObjectId] = Field(None, description="MongoDB ID of the department")
+    job_role: str
+    job_level: int
+    job_satisfaction: Optional[int] = Field(3, ge=1, le=5, description="Job satisfaction rating (1–5)")
+    job_involvement: Optional[int] = Field(3, ge=1, le=5, description="Job involvement rating (1–5)")
+    business_travel: Optional[str] = Field("Travel_Rarely", description="Travel frequency for the job")
+    overtime: Optional[str] = Field("No", description="Whether the employee works overtime")
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "employee_id": "6904ac56d9c49407108d277e",
+                "department_id": "69025c53ee15d86054db580d",
+                "job_role": "Software Engineer",
+                "job_level": 2,
+                "job_satisfaction": 4,
+                "job_involvement": 3,
+                "business_travel": "Travel_Rarely",
+                "overtime": "No"
+            }
+        }
+    )
+
+
+class JobDetailCreate(JobDetailBase):
+    """Used for POST (creating job details)."""
+    pass
+
+
+class JobDetail(JobDetailBase):
+    """Used for GET/PUT (returning job details)."""
+    job_id: Optional[PyObjectId] = Field(default=None, alias="_id")
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str}
+    )

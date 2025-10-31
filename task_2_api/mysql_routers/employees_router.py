@@ -7,7 +7,7 @@ from .. import models, schemas
 
 router = APIRouter(
     prefix="/mysql/employees",
-    tags=["Employees"] 
+    tags=["Employees (MYSQL)"] 
 )
 
 @router.get("/", response_model=list[schemas.Employee])

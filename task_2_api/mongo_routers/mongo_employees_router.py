@@ -8,7 +8,7 @@ from ..mongodb_schemas import Employee, EmployeeBase
 
 router = APIRouter(
     prefix="/mongo/employees",
-    tags=["MongoDB Employees"]
+    tags=["Employees (MongoDB)"]
 )
 
 @router.get("/")

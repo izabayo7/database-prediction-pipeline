@@ -1,37 +1,41 @@
-from fastapi import APIRouter, HTTPException
-from .. import schemas
+from fastapi import APIRouter, HTTPException, Query
+from typing import List, Optional
+from .. import mongodb_schemas as schemas
 from ..mongodb_crud import job_details_crud as crud
 
 router = APIRouter(
-    prefix="/mongo",
-    tags=["Mongo Job Details"]
+    prefix="/mongo/job_details",
+    tags=["Job Details (MongoDB)"]
 )
 
-@router.get("/job_details", response_model=list[schemas.JobDetail])
-def list_job_details(skip: int = 0, limit: int = 10):
-    return crud.get_job_details(skip, limit)
+@router.post("/", response_model=schemas.JobDetail)
+def create_job_detail(job_detail: schemas.JobDetailCreate):
+    return crud.create_job_detail(job_detail.model_dump())
 
-@router.get("/job_details/{id}", response_model=schemas.JobDetail)
-def get_job_detail(id: str):
-    detail = crud.get_job_detail(id)
-    if not detail:
-        raise HTTPException(status_code=404, detail="Job Detail not found")
-    return detail
+@router.get("/", response_model=List[schemas.JobDetail])
+def list_job_details(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, le=100)
+):
+    return crud.get_job_details(skip=skip, limit=limit)
 
-@router.post("/job_details", response_model=schemas.JobDetail)
-def create_job_detail(detail: schemas.JobDetailCreate):
-    return crud.create_job_detail(detail.dict())
+@router.get("/{job_id}", response_model=schemas.JobDetail)
+def get_job_detail(job_id: str):
+    job = crud.get_job_detail(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="Job detail not found")
+    return job
 
-@router.put("/job_details/{id}", response_model=schemas.JobDetail)
-def update_job_detail(id: str, detail: schemas.JobDetailCreate):
-    updated = crud.update_job_detail(id, detail.dict())
+@router.put("/{job_id}", response_model=schemas.JobDetail)
+def update_job_detail(job_id: str, job_detail: schemas.JobDetailCreate):
+    updated = crud.update_job_detail(job_id, job_detail.model_dump())
     if not updated:
-        raise HTTPException(status_code=404, detail="Job Detail not found")
+        raise HTTPException(status_code=404, detail="Job detail not found or not updated")
     return updated
 
-@router.delete("/job_details/{id}")
-def delete_job_detail(id: str):
-    success = crud.delete_job_detail(id)
-    if not success:
-        raise HTTPException(status_code=404, detail="Job Detail not found")
-    return {"message": "Job Detail deleted successfully"}
+@router.delete("/{job_id}")
+def delete_job_detail(job_id: str):
+    deleted = crud.delete_job_detail(job_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Job detail not found or already deleted")
+    return {"message": f"Job detail {job_id} deleted successfully"}
