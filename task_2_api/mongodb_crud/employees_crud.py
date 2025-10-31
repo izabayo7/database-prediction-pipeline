@@ -12,7 +12,8 @@ def get_employees(mongo_db, skip: int = 0, limit: int = 10, filters: dict = None
 
     # Convert ObjectId to string
     for item in data:
-        item["_id"] = str(item["_id"])
+        if "_id" in item:
+            item["_id"] = str(item["_id"])
 
     return data
 

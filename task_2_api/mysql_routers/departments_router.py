@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from ..database import get_db
-from .. import schemas
+from .. import mongodb_schemas as schemas
 from ..mysql_crud import mysql_departments_crud as crud
 
 router = APIRouter(
