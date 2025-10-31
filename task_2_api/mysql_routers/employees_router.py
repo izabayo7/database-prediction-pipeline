@@ -33,5 +33,13 @@ def update_employee(employee_number: int, employee: schemas.EmployeeCreate, db: 
 def delete_employee(employee_number: int, db: Session = Depends(get_db)):
     return crud.delete_employee(db, employee_number)
 
+@router.get("/latest/entry", response_model=schemas.Employee)
+def get_latest_employee_entry(db: Session = Depends(get_db)):
+    """Get the latest employee entry by creation timestamp (created_at)"""
+    employee = crud.get_latest_employee(db)
+    if not employee:
+        raise HTTPException(status_code=404, detail="No employees found")
+    return employee
+
 
 
