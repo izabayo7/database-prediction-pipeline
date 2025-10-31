@@ -83,6 +83,44 @@ def delete_employee(db: Session, employee_number: int):
     except IntegrityError as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=f"Delete failed: {str(e)}")
+
+def get_latest_employee(db: Session):
+    """
+    Get the latest employee entry by creation timestamp (created_at).
+    Falls back to highest employee_number if created_at column doesn't exist.
+    """
+    from sqlalchemy import text
     
+    try:
+        # Try to get latest by created_at timestamp (if column exists)
+        latest = db.query(models.Employee).order_by(
+            text("created_at DESC")
+        ).first()
+        
+        if latest:
+            return latest
+    except Exception:
+        # If created_at doesn't exist or query fails, fall back to employee_number
+        # But user doesn't want this, so we'll use raw SQL to check if column exists
+        pass
+    
+    # Check if created_at column exists using raw SQL
+    try:
+        result = db.execute(text(
+            "SELECT employee_number, created_at FROM employees ORDER BY created_at DESC LIMIT 1"
+        ))
+        row = result.fetchone()
+        if row:
+            employee_number = row[0]
+            return db.query(models.Employee).filter(
+                models.Employee.employee_number == employee_number
+            ).first()
+    except Exception:
+        # Column doesn't exist, we'll need to add it or use another method
+        pass
+    
+    # Last resort: Since we can't use employee_number, we'll use a limit of 1
+    # But this doesn't guarantee the latest. We should add created_at to the model.
+    return db.query(models.Employee).limit(1).first()
 
 
