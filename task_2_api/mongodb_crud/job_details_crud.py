@@ -1,10 +1,10 @@
 from bson import ObjectId
-from .database import db
+from ..mongo_database import mongo_db as db
 
 job_details = db["job_details"]
 
-def get_job_details():
-    return list(job_details.find())
+def get_job_details(skip=0, limit=10):
+    return list(job_details.find().skip(skip).limit(limit))
 
 def create_job_detail(data: dict):
     result = job_details.insert_one(data)

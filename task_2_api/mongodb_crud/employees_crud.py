@@ -1,5 +1,5 @@
 from bson import ObjectId
-from .database import db
+from ..mongo_database import mongo_db as db
 
 employees = db["employees"]
 departments = db["departments"]
