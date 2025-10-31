@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 from .database import Base
 
 
@@ -16,6 +17,7 @@ class Employee(Base):
     over_18 = Column(String(1), nullable=False)
     employee_count = Column(Integer, nullable=False, default=1)
     attrition = Column(String(3), nullable=False)
+    created_at = Column(DateTime, nullable=True, server_default=func.now())
 
     job_details = relationship(
         "JobDetail",
