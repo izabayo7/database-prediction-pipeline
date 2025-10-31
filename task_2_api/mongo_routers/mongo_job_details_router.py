@@ -4,7 +4,7 @@ from ..mongodb_crud import job_details_crud as crud
 
 router = APIRouter(
     prefix="/mongo",
-    tags=["Job Details"]
+    tags=["Mongo Job Details"]
 )
 
 @router.get("/job_details", response_model=list[schemas.JobDetail])

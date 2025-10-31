@@ -1,25 +1,51 @@
 from bson import ObjectId
-from ..mongo_database import mongo_db as db
 
-employees = db["employees"]
-departments = db["departments"]
-job_details = db["job_details"]
+def get_employees(mongo_db, skip: int = 0, limit: int = 10, filters: dict = None):
+    employees_collection = mongo_db["employees"]
 
-def get_employees(skip=0, limit=10):
-    return list(employees.find().skip(skip).limit(limit))
+    # Apply filters if provided
+    query = filters if filters else {}
 
-def get_employee(id: str):
-    return employees.find_one({"_id": ObjectId(id)})
+    # Query with pagination
+    cursor = employees_collection.find(query).skip(skip).limit(limit)
+    data = list(cursor)
 
-def create_employee(data: dict):
-    result = employees.insert_one(data)
-    return employees.find_one({"_id": result.inserted_id})
+    # Convert ObjectId to string
+    for item in data:
+        item["_id"] = str(item["_id"])
 
-def update_employee(id: str, data: dict):
-    employees.update_one({"_id": ObjectId(id)}, {"$set": data})
-    return employees.find_one({"_id": ObjectId(id)})
+    return data
 
-def delete_employee(id: str):
-    res = employees.delete_one({"_id": ObjectId(id)})
-    return res.deleted_count > 0
 
+def get_employee(mongo_db, employee_id: str):
+    employees_collection = mongo_db["employees"]
+    employee = employees_collection.find_one({"_id": ObjectId(employee_id)})
+    if employee:
+        employee["_id"] = str(employee["_id"])
+    return employee
+
+
+def create_employee(mongo_db, employee_data: dict):
+    employees_collection = mongo_db["employees"]
+    result = employees_collection.insert_one(employee_data)
+    new_emp = employees_collection.find_one({"_id": result.inserted_id})
+    new_emp["_id"] = str(new_emp["_id"])
+    return new_emp
+
+
+def update_employee(mongo_db, employee_id: str, update_data: dict):
+    employees_collection = mongo_db["employees"]
+    employees_collection.update_one({"_id": ObjectId(employee_id)}, {"$set": update_data})
+    updated_emp = employees_collection.find_one({"_id": ObjectId(employee_id)})
+    if updated_emp:
+        updated_emp["_id"] = str(updated_emp["_id"])
+    return updated_emp
+
+
+def delete_employee(mongo_db, employee_id: str):
+    employees_collection = mongo_db["employees"]
+    result = employees_collection.delete_one({"_id": ObjectId(employee_id)})
+    if result.deleted_count == 1:
+        return {"message": f"Employee {employee_id} deleted successfully"}
+    else:
+        return {"message": f"Employee {employee_id} not found"}
