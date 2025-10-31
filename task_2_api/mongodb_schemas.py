@@ -168,3 +168,49 @@ class JobDetail(JobDetailBase):
         arbitrary_types_allowed=True,
         json_encoders={ObjectId: str}
     )
+
+
+# PREDICTION MODELS
+
+class PredictionBase(BaseModel):
+    employee_number: int = Field(..., description="Employee number (no foreign key constraint in MongoDB)")
+    predicted_monthly_income: float = Field(..., description="Predicted monthly income")
+    input_features: Dict = Field(..., description="Input features used for prediction (JSON)")
+    model_version: str = Field(default="v1.0", description="Version of the model used")
+    prediction_date: Optional[datetime] = Field(
+        default_factory=datetime.utcnow,
+        description="Timestamp when prediction was made"
+    )
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "employee_number": 2069,
+                "predicted_monthly_income": 6836.28,
+                "input_features": {
+                    "Age": 21,
+                    "Gender": 0,
+                    "Education": 2,
+                    "DistanceFromHome": 1
+                },
+                "model_version": "v1.0",
+                "prediction_date": "2025-10-31T22:36:07Z"
+            }
+        }
+    )
+
+
+class PredictionCreate(PredictionBase):
+    """Used for POST (creating predictions)."""
+    pass
+
+
+class Prediction(PredictionBase):
+    """Used for GET (returning predictions)."""
+    prediction_id: Optional[PyObjectId] = Field(default=None, alias="_id")
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str}
+    )
