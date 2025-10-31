@@ -6,7 +6,7 @@ from .. import models, schemas
 
 
 router = APIRouter(
-    prefix="/employees",
+    prefix="/mysql/employees",
     tags=["Employees"] 
 )
 
@@ -32,3 +32,6 @@ def update_employee(employee_number: int, employee: schemas.EmployeeCreate, db: 
 @router.delete("/{employee_number}")
 def delete_employee(employee_number: int, db: Session = Depends(get_db)):
     return crud.delete_employee(db, employee_number)
+
+
+

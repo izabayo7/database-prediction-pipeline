@@ -4,7 +4,6 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from .. import models, schemas
 
-
 def get_employees(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.Employee).offset(skip).limit(limit).all()
 

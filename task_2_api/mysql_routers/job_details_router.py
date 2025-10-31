@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from ..database import get_db
-from ..crud import mysql_ob_details_crud as crud
+from ..mysql_crud import mysql_ob_details_crud as crud
 from .. import schemas
 
 router = APIRouter(
-    prefix="/job_details",
+    prefix="/mysql/job_details",
     tags=["Job Details"]
 )
 

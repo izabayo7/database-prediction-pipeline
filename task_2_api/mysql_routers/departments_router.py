@@ -5,7 +5,7 @@ from .. import schemas
 from ..mysql_crud import mysql_departments_crud as crud
 
 router = APIRouter(
-    prefix="/departments",
+    prefix="/mysql/departments",
     tags=["Departments"]
 )
 
@@ -24,3 +24,6 @@ def update_department(department_id: int, department: schemas.DepartmentCreate, 
 @router.delete("/{department_id}")
 def delete_department(department_id: int, db: Session = Depends(get_db)):
     return crud.delete_department(db, department_id)
+
+
+
