@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from .mysql_routers import employees_router, departments_router, job_details_router 
 from .mongo_routers import mongo_departments_router, mongo_employees_router, mongo_job_details_router 
+# from mongo_database import mongo_db
 
 app = FastAPI(
     title="Employee Attrition API",

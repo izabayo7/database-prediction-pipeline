@@ -1,7 +1,10 @@
 from fastapi import APIRouter, HTTPException, Query
 from typing import Optional
+
+from task_2_api import schemas
 from ..mongo_database import mongo_db
 from ..mongodb_crud import employees_crud as crud
+from ..mongodb_schemas import Employee, EmployeeBase
 
 router = APIRouter(
     prefix="/mongo/employees",
@@ -37,18 +40,17 @@ def get_employee(employee_id: str):
     return emp
 
 
-@router.post("/")
-def create_employee(employee: dict):
-    return crud.create_employee(mongo_db, employee)
+@router.post("/", response_model=Employee) 
+def create_employee(employee: EmployeeBase):
+    return crud.create_employee(mongo_db, employee.dict())
 
 
-@router.put("/{employee_id}")
-def update_employee(employee_id: str, employee: dict):
-    updated = crud.update_employee(mongo_db, employee_id, employee)
+@router.put("/{employee_id}", response_model=Employee)
+def update_employee(employee_id: str, employee: EmployeeBase):
+    updated = crud.update_employee(mongo_db, employee_id, employee.dict())
     if not updated:
         raise HTTPException(status_code=404, detail="Employee not found")
     return updated
-
 
 @router.delete("/{employee_id}")
 def delete_employee(employee_id: str):

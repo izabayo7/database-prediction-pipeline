@@ -24,14 +24,20 @@ def get_employee(mongo_db, employee_id: str):
         employee["_id"] = str(employee["_id"])
     return employee
 
-
 def create_employee(mongo_db, employee_data: dict):
     employees_collection = mongo_db["employees"]
-    result = employees_collection.insert_one(employee_data)
-    new_emp = employees_collection.find_one({"_id": result.inserted_id})
-    new_emp["_id"] = str(new_emp["_id"])
-    return new_emp
 
+    # Auto-generate employee_number
+    last = employees_collection.find_one(sort=[("employee_number", -1)])
+    next_number = (last["employee_number"] + 1) if last and "employee_number" in last else 1
+    employee_data["employee_number"] = next_number
+
+    result = employees_collection.insert_one(employee_data)
+
+    new_emp = employees_collection.find_one({"_id": result.inserted_id})
+    new_emp["_id"] = str(new_emp["_id"])  # ✅ Make sure this line exists
+
+    return new_emp
 
 def update_employee(mongo_db, employee_id: str, update_data: dict):
     employees_collection = mongo_db["employees"]

@@ -1,22 +1,24 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 from bson import ObjectId
 
-class PyObjectId(ObjectId):
+# ✅ Pydantic v2-compatible ObjectId type
+class PyObjectId(str):
     @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
+    def __get_pydantic_core_schema__(cls, _source_type, _handler):
+        from pydantic_core import core_schema
+        # define how Pydantic should validate ObjectId
+        return core_schema.no_info_after_validator_function(
+            cls.validate, core_schema.str_schema()
+        )
 
     @classmethod
     def validate(cls, v):
         if not ObjectId.is_valid(v):
             raise ValueError("Invalid ObjectId")
-        return ObjectId(v)
+        return str(v)
 
-
-# =========================
-# Employee
-# =========================
+# ✅ Employee Base Model
 class EmployeeBase(BaseModel):
     age: int
     gender: str
@@ -27,48 +29,31 @@ class EmployeeBase(BaseModel):
     over_18: str
     employee_count: int
     attrition: str
-
-
-class Employee(EmployeeBase):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-
-    class Config:
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
-
-
-# =========================
-# Department
-# =========================
-class DepartmentBase(BaseModel):
-    department_name: str
-
-
-class Department(DepartmentBase):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-
-    class Config:
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
-
-
-# =========================
-# JobDetail
-# =========================
-class JobDetailBase(BaseModel):
-    employee_id: str
-    department_id: Optional[str] = None
-    job_role: str
-    job_level: int
+    department_name: Optional[str] = None
     job_satisfaction: Optional[int] = 3
-    job_involvement: Optional[int] = 3
-    business_travel: Optional[str] = "Travel_Rarely"
-    overtime: Optional[str] = "No"
 
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "age": 34,
+                "gender": "Female",
+                "marital_status": "Single",
+                "education": 3,
+                "education_field": "Life Sciences",
+                "distance_from_home": 12,
+                "over_18": "Y",
+                "employee_count": 1,
+                "attrition": "No",
+                "department_name": "Development",
+                "job_satisfaction": 4,
+            }
+        }
+    )
+class Employee(EmployeeBase):
+    id: Optional[PyObjectId] = Field(default=None, alias="_id")
 
-class JobDetail(JobDetailBase):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-
-    class Config:
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
+    model_config = ConfigDict(
+        populate_by_name=True,
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str}
+    )
