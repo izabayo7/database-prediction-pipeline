@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: ./task_2_api
+      dockerfile: Dockerfile
+    container_name: hr-attrition-api
+    ports:
+      - "8030:8000"
+    env_file:
+      - ./task_2_api/.env
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
