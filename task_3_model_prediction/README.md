@@ -92,8 +92,7 @@ The model uses all available features from the HR Employee Attrition dataset exc
 The prediction pipeline (`predict_employee_income.ipynb`) performs the following steps:
 
 ### Step 1: Fetch Latest Employee Entry
-- Connects to the API at `http://localhost:8000`
-- Fetches all employees and selects the one with the highest `employee_number`
+- Connects to the API at `https://ml.bwenge.rw/mysql/employees/latest/entry`
 - Handles connection errors gracefully
 
 ### Step 2: Handle Missing Data
@@ -143,9 +142,9 @@ CREATE TABLE predictions (
 ## 🔧 Configuration
 
 ### API Configuration
-Update the API base URL in `predict_employee_income.ipynb` if your API runs on a different port:
+Update the API base URL in `predict_employee_income.ipynb` if your API runs on a different host:
 ```python
-API_BASE_URL = "http://localhost:8000"
+API_BASE_URL = "https://ml.bwenge.rw"
 ```
 
 ### Database Configuration
@@ -153,7 +152,7 @@ The prediction script uses the same database configuration as `task_2_api`. Ensu
 ```
 MYSQL_USER=your_user
 MYSQL_PASSWORD=your_password
-MYSQL_HOST=localhost
+MYSQL_HOST=host
 MYSQL_PORT=3306
 MYSQL_DATABASE=hr_attrition_db
 ```
@@ -209,7 +208,7 @@ After training, the model provides:
 
 ### API Connection Error
 - **Error**: `ConnectionError: Could not connect to API`
-- **Solution**: Ensure the API server is running on `http://localhost:8000`
+- **Solution**: Ensure the API server is running on `https://ml.bwenge.rw` or `http://localhost:8000`
 
 ### Database Connection Error
 - **Error**: `Error connecting to database`
